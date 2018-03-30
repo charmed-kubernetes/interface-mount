@@ -2,8 +2,6 @@ from charms.reactive import when, when_not
 from charms.reactive import set_flag, clear_flag
 from charms.reactive import Endpoint
 
-from charmhelpers.core import hookenv
-
 class MountRequires(Endpoint):
 
     @when('endpoint.{endpoint_name}.changed')
@@ -39,7 +37,6 @@ class MountRequires(Endpoint):
         """
         mounts = {}
         for relation in self.relations:
-            hookenv.log('setting up relation {}'.format(relation))
             mount_name = relation.application_name
             mount = mounts.setdefault(mount_name, {
                 'mount_name': mount_name,
