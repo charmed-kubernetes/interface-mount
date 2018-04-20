@@ -6,7 +6,7 @@ class MountRequires(Endpoint):
 
     @when('endpoint.{endpoint_name}.changed')
     def changed(self):
-        if any(unit.received['mountpoint'] for unit in self.all_units):
+        if any(unit.received_raw['mountpoint'] for unit in self.all_joined_units):
             set_flag(self.expand_name('{endpoint_name}.available'))
 
     @when_not('endpoint.{endpoint_name}.joined')
