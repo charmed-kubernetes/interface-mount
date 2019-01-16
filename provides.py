@@ -15,7 +15,8 @@ class MountProvides(Endpoint):
     def get_mount_requests(self):
         return [{
             'identifier': relation.relation_id,
-            'application_name': relation.application_name,
+            'application_name': relation.joined_units.received_raw.get(
+                'export_name', relation.application_name),
             'addresses': [
                 unit.received_raw.get('ingress-address',
                                       unit.received_raw['private-address'])
@@ -30,4 +31,9 @@ class MountProvides(Endpoint):
                 'fstype': response['fstype'],
                 'options': response['options'],
             })
+            if 'export_name' in response:
+                relation.to_publish_raw['export_name'] = (
+                    response['export_name'])
+            elif 'export_name' in relation.to_publish_raw:
+                del relation.to_publish_raw['export_name']
         clear_flag(self.expand_name('{endpoint_name}.changed'))
