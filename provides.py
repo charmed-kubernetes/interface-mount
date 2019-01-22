@@ -31,9 +31,9 @@ class MountProvides(Endpoint):
                 'fstype': response['fstype'],
                 'options': response['options'],
             })
-            if 'export_name' in response:
-                relation.to_publish_raw['export_name'] = (
-                    response['export_name'])
-            elif 'export_name' in relation.to_publish_raw:
-                del relation.to_publish_raw['export_name']
+            for key in ('export_name', 'hostname'):
+                if key in response:
+                    relation.to_publish_raw[key] = response[key]
+                elif key in relation.to_publish_raw:
+                    del relation.to_publish_raw[key]
         clear_flag(self.expand_name('{endpoint_name}.changed'))
