@@ -48,23 +48,24 @@ class MountRequires(Endpoint):
         """
         mounts = {}
         for relation in self.relations:
-            mount_name = relation.joined_units.received_raw.get(
-                'export_name', relation.application_name)
-            mount = mounts.setdefault(mount_name, {
-                'mount_name': mount_name,
-                'mounts': [],
-            })
-            data = relation.joined_units.received_raw
-            mountpoint = data['mountpoint']
-            fstype = data['fstype']
-            options = data['options']
-            host = data['hostname'] or \
-                data['private-address']
-            if host and mountpoint and fstype and options:
-                mount['mounts'].append({
-                    'hostname': host,
-                    'mountpoint': mountpoint,
-                    'fstype': fstype,
-                    'options': options
+            for unit in relation.joined_units:
+                mount_name = unit.received_raw.get(
+                    'export_name', relation.application_name)
+                mount = mounts.setdefault(mount_name, {
+                    'mount_name': mount_name,
+                    'mounts': [],
                 })
+                data = unit.received_raw
+                mountpoint = data['mountpoint']
+                fstype = data['fstype']
+                options = data['options']
+                host = data['hostname'] or \
+                    data['private-address']
+                if host and mountpoint and fstype and options:
+                    mount['mounts'].append({
+                        'hostname': host,
+                        'mountpoint': mountpoint,
+                        'fstype': fstype,
+                        'options': options
+                    })
         return [m for m in mounts.values() if m['mounts']]
